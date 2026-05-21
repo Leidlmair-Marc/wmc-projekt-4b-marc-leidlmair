@@ -12,7 +12,6 @@
 
 <div class="login-page">
 	<div class="background"></div>
-	<div class="overlay"></div>
 
 	<div class="login-card">
 		<div class="logo-section">
@@ -22,9 +21,7 @@
 
 			<h1>Teyvat Synergy</h1>
 
-			<p>
-				Baue das perfekte Team.<br />
-			</p>
+			<p>Baue das perfekte Team.<br /></p>
 		</div>
 
 		<!-- Card in der Mitte -->
@@ -35,7 +32,7 @@
 				<input
 					id="email"
 					type="email"
-					bind:value={email}
+					bindvalue={email}
 					placeholder="example@mail.com"
 				/>
 			</div>
@@ -46,14 +43,11 @@
 				<input
 					id="password"
 					type="password"
-					bind:value={password}
+					bindvalue={password}
 					placeholder="••••••••"
 				/>
 			</div>
-
-			<button type="submit" class="login-btn">
-				Anmelden
-			</button>
+			<button type="submit" class="login-btn">Anmelden</button>
 		</form>
 
 		<p class="register-text">
@@ -81,12 +75,12 @@
 	}
 
 	.background {
-	position: fixed;
-	inset: 0;
-	background-image: url('/src/lib/images/Login_Background.png');
-	background-size: cover;
-	background-position: center;
-    opacity: 0.35;
+	    position: fixed;
+	    inset: 0;
+	    background-image: url('/src/lib/images/Login_Background.png');
+	    background-size: cover;
+	    background-position: center;
+        opacity: 0.35;
     }
 
 	.login-card {
@@ -188,10 +182,10 @@
 	}
 
     .register-text a {
-	color: #c084fc;
-	text-decoration: none;
-	font-weight: bold;
-}
+	    color: #c084fc;
+	    text-decoration: none;
+	    font-weight: bold;
+    }
 
     .register-text a {
 	    color: #c084fc;

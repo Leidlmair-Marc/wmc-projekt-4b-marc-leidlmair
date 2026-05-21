@@ -20,7 +20,6 @@
 
 <div class="register-page">
 	<div class="background"></div>
-	<div class="overlay"></div>
 
 	<div class="register-card">
 		<div class="logo-section">
@@ -44,7 +43,7 @@
 				<input
 					id="username"
 					type="text"
-					bind:value={username}
+					bindvalue={username}
 					placeholder="Dein Benutzername"
 				/>
 			</div>
@@ -55,7 +54,7 @@
 				<input
 					id="email"
 					type="email"
-					bind:value={email}
+					bindvalue={email}
 					placeholder="example@mail.com"
 				/>
 			</div>
@@ -66,7 +65,7 @@
 				<input
 					id="password"
 					type="password"
-					bind:value={password}
+					bindvalue={password}
 					placeholder="••••••••"
 				/>
 			</div>
@@ -84,9 +83,7 @@
 				/>
 			</div>
 
-			<button type="submit" class="register-btn">
-				Registrieren
-			</button>
+			<button type="submit" class="register-btn">Registrieren</button>
 		</form>
 
 		<p class="login-text">
