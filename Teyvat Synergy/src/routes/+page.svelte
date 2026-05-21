@@ -54,18 +54,6 @@
 				/>
 			</div>
 
-			<!-- Remember -->
-			<div class="options">
-				<label class="checkbox">
-					<input type="checkbox" />
-					Angemeldet bleiben
-				</label>
-
-				<button type="button" class="forgot-btn">
-					Passwort vergessen?
-				</button>
-			</div>
-
 			<!-- Login Button -->
 			<button type="submit" class="login-btn">
 				Anmelden
@@ -187,33 +175,6 @@
 	input:focus {
 		border-color: #a855f7;
 		box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
-	}
-
-	.options {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 25px;
-		font-size: 14px;
-	}
-
-	.checkbox {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		color: #d1d5db;
-	}
-
-	.forgot-btn {
-		background: none;
-		border: none;
-		color: #c084fc;
-		cursor: pointer;
-		font-size: 14px;
-	}
-
-	.forgot-btn:hover {
-		color: #d8b4fe;
 	}
 
 	.login-btn {
