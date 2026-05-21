@@ -1,20 +1,28 @@
 <script>
+	let username = $state('');
 	let email = $state('');
 	let password = $state('');
+	let confirmPassword = $state('');
 
-	function handleLogin() {
+	function handleRegister() {
+		if (password !== confirmPassword) {
+			alert('Passwörter stimmen nicht überein');
+			return;
+		}
+
 		console.log({
+			username,
 			email,
 			password
 		});
 	}
 </script>
 
-<div class="login-page">
+<div class="register-page">
 	<div class="background"></div>
 	<div class="overlay"></div>
 
-	<div class="login-card">
+	<div class="register-card">
 		<div class="logo-section">
 			<div class="logo-circle">
 				<span>✨</span>
@@ -23,12 +31,24 @@
 			<h1>Teyvat Synergy</h1>
 
 			<p>
-				Baue das perfekte Team.<br />
+				Erstelle dein Konto und<br />
+				beginne dein Abenteuer.
 			</p>
 		</div>
 
 		<!-- Card in der Mitte -->
-		<form onsubmit={handleLogin}>
+		<form onsubmit={handleRegister}>
+			<div class="input-group">
+				<label for="username">Benutzername</label>
+
+				<input
+					id="username"
+					type="text"
+					bind:value={username}
+					placeholder="Dein Benutzername"
+				/>
+			</div>
+
 			<div class="input-group">
 				<label for="email">E-Mail-Adresse</label>
 
@@ -51,14 +71,27 @@
 				/>
 			</div>
 
-			<button type="submit" class="login-btn">
-				Anmelden
+			<div class="input-group">
+				<label for="confirmPassword">
+					Passwort bestätigen
+				</label>
+
+				<input
+					id="confirmPassword"
+					type="password"
+					bindvalue={confirmPassword}
+					placeholder="••••••••"
+				/>
+			</div>
+
+			<button type="submit" class="register-btn">
+				Registrieren
 			</button>
 		</form>
 
-		<p class="register-text">
-			Noch kein Konto?
-			<a href="/register">Registrieren</a>
+		<p class="login-text">
+			Bereits ein Konto?
+			<a href="/">Anmelden</a>
 		</p>
 	</div>
 </div>
@@ -70,7 +103,7 @@
 		background: #0b1020;
 	}
 
-	.login-page {
+	.register-page {
 		min-height: 100vh;
 		display: flex;
 		align-items: center;
@@ -81,19 +114,19 @@
 	}
 
 	.background {
-	position: fixed;
-	inset: 0;
-	background-image: url('/src/lib/images/Login_Background.png');
-	background-size: cover;
-	background-position: center;
-    opacity: 0.35;
+		position: fixed;
+		inset: 0;
+		background-image: url('/src/lib/images/Register_Background.png');
+		background-size: cover;
+		background-position: center top;
+        opacity: 0.35;
     }
 
-	.login-card {
+	.register-card {
 		position: relative;
 		z-index: 1;
 		width: 100%;
-		max-width: 430px;
+		max-width: 450px;
 		padding: 40px;
 		border-radius: 30px;
 		background: rgba(255, 255, 255, 0.08);
@@ -105,7 +138,7 @@
 
 	.logo-section {
 		text-align: center;
-		margin-bottom: 35px;
+		margin-bottom: 30px;
 	}
 
 	.logo-circle {
@@ -135,7 +168,7 @@
 	.input-group {
 		display: flex;
 		flex-direction: column;
-		margin-bottom: 20px;
+		margin-bottom: 18px;
 	}
 
 	label {
@@ -163,9 +196,10 @@
 		box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
 	}
 
-	.login-btn {
+	.register-btn {
 		width: 100%;
 		padding: 14px;
+		margin-top: 10px;
 		border: none;
 		border-radius: 14px;
 		background: #9333ea;
@@ -176,35 +210,29 @@
 		transition: 0.2s;
 	}
 
-	.login-btn:hover {
+	.register-btn:hover {
 		background: #a855f7;
 	}
 
-	.register-text {
+	.login-text {
 		text-align: center;
 		margin-top: 25px;
 		color: #9ca3af;
 		font-size: 14px;
 	}
 
-    .register-text a {
+    .login-text a {
 	color: #c084fc;
 	text-decoration: none;
 	font-weight: bold;
 }
 
-    .register-text a {
-	    color: #c084fc;
-    	text-decoration: none;
-	    font-weight: bold;
-    }
-
-    .register-text a:hover {
-	    color: #d8b4fe;
+    .login-text a:hover {
+    	color: #d8b4fe;
     }
 
 	@media (max-width: 500px) {
-		.login-card {
+		.register-card {
 			padding: 30px 20px;
 		}
 
