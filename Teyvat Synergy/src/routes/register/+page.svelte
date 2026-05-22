@@ -4,18 +4,31 @@
 	let password = $state('');
 	let confirmPassword = $state('');
 
-	function handleRegister() {
-		if (password !== confirmPassword) {
-			alert('Passwörter stimmen nicht überein');
-			return;
-		}
+	async function handleRegister() {
+	if (password !== confirmPassword) {
+		alert('Passwörter stimmen nicht überein');
+		return;
+	}
 
-		console.log({
+	const response = await fetch('http://localhost:3000/register', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
 			username,
 			email,
 			password
-		});
+		})
+	});
+	const data = await response.json();
+
+	alert(data.message);
+
+	if (response.ok) {
+		window.location.href = '/';
 	}
+}
 </script>
 
 <div class="register-page">
@@ -43,7 +56,7 @@
 				<input
 					id="username"
 					type="text"
-					bindvalue={username}
+					bind:value={username}
 					placeholder="Dein Benutzername"
 				/>
 			</div>
@@ -54,7 +67,7 @@
 				<input
 					id="email"
 					type="email"
-					bindvalue={email}
+					bind:value={email}
 					placeholder="example@mail.com"
 				/>
 			</div>
@@ -65,7 +78,7 @@
 				<input
 					id="password"
 					type="password"
-					bindvalue={password}
+					bind:value={password}
 					placeholder="••••••••"
 				/>
 			</div>
@@ -78,7 +91,7 @@
 				<input
 					id="confirmPassword"
 					type="password"
-					bindvalue={confirmPassword}
+					bind:value={confirmPassword}
 					placeholder="••••••••"
 				/>
 			</div>

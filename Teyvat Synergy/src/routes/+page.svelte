@@ -1,13 +1,29 @@
 <script>
-	let email = $state('');
+	let login = $state('');
 	let password = $state('');
 
-	function handleLogin() {
-		console.log({
-			email,
+	async function handleLogin() {
+	const response = await fetch('http://localhost:3000/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			login,
 			password
-		});
+		})
+	});
+
+	const data = await response.json();
+
+	alert(data.message);
+
+	if (response.ok) {
+		console.log(data.user);
+
+		window.location.href = '/charakter';
 	}
+}
 </script>
 
 <div class="login-page">
@@ -27,13 +43,13 @@
 		<!-- Card in der Mitte -->
 		<form onsubmit={handleLogin}>
 			<div class="input-group">
-				<label for="email">E-Mail-Adresse</label>
+				<label for="login">Benutzername oder E-Mail</label>
 
 				<input
-					id="email"
-					type="email"
-					bindvalue={email}
-					placeholder="example@mail.com"
+					id="login"
+					type="text"
+					bind:value={login}
+					placeholder="Benutzername oder E-Mail"
 				/>
 			</div>
 
@@ -43,7 +59,7 @@
 				<input
 					id="password"
 					type="password"
-					bindvalue={password}
+					bind:value={password}
 					placeholder="••••••••"
 				/>
 			</div>
