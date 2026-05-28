@@ -786,7 +786,7 @@ export const characters = [
 	element: 'Anemo',
 	role: 'DPS',
 	rarity: 4,
-	image: 'https://enka.network/ui/UI_AvatarIcon_Heizou.png'
+	image: 'https://enka.network/ui/UI_AvatarIcon_Heizo.png'
 },
 
 {
@@ -849,7 +849,7 @@ export const characters = [
 	element: 'None',
 	role: 'DPS',
 	rarity: 5,
-	image: 'https://enka.network/ui/UI_AvatarIcon_PlayerBoy.png'
+	image: '/src/lib/images/Traveler.png'
 },
 
 {
@@ -975,7 +975,7 @@ export const characters = [
 	element: 'Pyro',
 	role: 'DPS',
 	rarity: 4,
-	image: 'https://enka.network/ui/UI_AvatarIcon_Yanfei.png'
+	image: 'https://enka.network/ui/UI_AvatarIcon_Feiyan.png'
 },
 
 {
