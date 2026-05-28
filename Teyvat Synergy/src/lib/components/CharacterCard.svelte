@@ -32,10 +32,7 @@
 
 <div class="card">
 	<div class="image-wrapper">
-		<img
-			src={character.image}
-			alt={character.name}
-		/>
+		<img src={character.image} alt={character.name} />
 	</div>
 
 	<div class="content">
@@ -49,45 +46,32 @@
 				{character.element}
 			</span>
 
-			<span class="role">
-				{character.role}
-			</span>
+			<span class="role">{character.role}</span>
 		</div>
 
 		<div
-	class="stars"
-	class:fiveStar={character.rarity === 5}
-	class:fourStar={character.rarity === 4}
->
-	{'★'.repeat(character.rarity)}
-</div>
+			class="stars"
+			class:fiveStar={character.rarity === 5}
+			class:fourStar={character.rarity === 4}
+		>
+			{'★'.repeat(character.rarity)}
+		</div>
 	</div>
 </div>
 
 <style>
 	.card {
-		background: linear-gradient(
-			180deg,
-			rgba(22, 24, 50, 0.95),
-			rgba(15, 18, 35, 0.95)
-		);
-
+		background: rgba(15, 18, 35, 0.95);
 		border: 1px solid rgba(255, 255, 255, 0.06);
-
 		border-radius: 20px;
-
 		overflow: hidden;
-
 		transition: 0.25s;
-
 		cursor: pointer;
-
 		backdrop-filter: blur(10px);
 	}
 
 	.card:hover {
 		transform: translateY(-6px);
-
 		box-shadow:
 			0 10px 30px rgba(0, 0, 0, 0.4),
 			0 0 20px rgba(147, 51, 234, 0.25);
@@ -100,17 +84,13 @@
 	img {
 		width: 100%;
 		height: 160px;
-
 		object-fit: contain;
-
 		border-radius: 14px;
-
-		background:
-			radial-gradient(
-				circle at top,
-				rgba(255,255,255,0.08),
-				rgba(255,255,255,0.02)
-			);
+		background: radial-gradient(
+			circle at top,
+			rgba(255, 255, 255, 0.08),
+			rgba(255, 255, 255, 0.02)
+		);
 	}
 
 	.content {
@@ -128,30 +108,24 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-
 		margin-bottom: 10px;
 	}
 
 	.element,
 	.role {
 		padding: 5px 10px;
-
 		border-radius: 999px;
-
 		font-size: 11px;
-
 		font-weight: bold;
 	}
 
 	.role {
-		background: rgba(255,255,255,0.08);
+		background: rgba(255, 255, 255, 0.08);
 	}
 
 	.stars {
 		color: #ffd54a;
-
 		font-size: 14px;
-
 		letter-spacing: 2px;
 	}
 </style>

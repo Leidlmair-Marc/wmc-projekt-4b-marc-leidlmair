@@ -3,27 +3,27 @@
 	let password = $state('');
 
 	async function handleLogin() {
-	const response = await fetch('http://localhost:3000/login', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			login,
-			password
-		})
-	});
+		const response = await fetch('http://localhost:3000/login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				login,
+				password,
+			}),
+		});
 
-	const data = await response.json();
+		const data = await response.json();
 
-	alert(data.message);
+		alert(data.message);
 
-	if (response.ok) {
-		console.log(data.user);
+		if (response.ok) {
+			console.log(data.user);
 
-		window.location.href = '/charakter';
+			window.location.href = '/charakter';
+		}
 	}
-}
 </script>
 
 <div class="login-page">
@@ -91,13 +91,13 @@
 	}
 
 	.background {
-	    position: fixed;
-	    inset: 0;
-	    background-image: url('/src/lib/images/Login_Background.png');
-	    background-size: cover;
-	    background-position: center;
-        opacity: 0.35;
-    }
+		position: fixed;
+		inset: 0;
+		background-image: url('/src/lib/images/Login_Background.png');
+		background-size: cover;
+		background-position: center;
+		opacity: 0.35;
+	}
 
 	.login-card {
 		position: relative;
@@ -197,21 +197,21 @@
 		font-size: 14px;
 	}
 
-    .register-text a {
-	    color: #c084fc;
-	    text-decoration: none;
-	    font-weight: bold;
-    }
+	.register-text a {
+		color: #c084fc;
+		text-decoration: none;
+		font-weight: bold;
+	}
 
-    .register-text a {
-	    color: #c084fc;
-    	text-decoration: none;
-	    font-weight: bold;
-    }
+	.register-text a {
+		color: #c084fc;
+		text-decoration: none;
+		font-weight: bold;
+	}
 
-    .register-text a:hover {
-	    color: #d8b4fe;
-    }
+	.register-text a:hover {
+		color: #d8b4fe;
+	}
 
 	@media (max-width: 500px) {
 		.login-card {

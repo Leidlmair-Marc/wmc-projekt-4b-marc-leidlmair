@@ -5,30 +5,30 @@
 	let confirmPassword = $state('');
 
 	async function handleRegister() {
-	if (password !== confirmPassword) {
-		alert('Passwörter stimmen nicht überein');
-		return;
+		if (password !== confirmPassword) {
+			alert('Passwörter stimmen nicht überein');
+			return;
+		}
+
+		const response = await fetch('http://localhost:3000/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				username,
+				email,
+				password,
+			}),
+		});
+		const data = await response.json();
+
+		alert(data.message);
+
+		if (response.ok) {
+			window.location.href = '/';
+		}
 	}
-
-	const response = await fetch('http://localhost:3000/register', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			username,
-			email,
-			password
-		})
-	});
-	const data = await response.json();
-
-	alert(data.message);
-
-	if (response.ok) {
-		window.location.href = '/';
-	}
-}
 </script>
 
 <div class="register-page">
@@ -84,9 +84,7 @@
 			</div>
 
 			<div class="input-group">
-				<label for="confirmPassword">
-					Passwort bestätigen
-				</label>
+				<label for="confirmPassword"> Passwort bestätigen </label>
 
 				<input
 					id="confirmPassword"
@@ -129,8 +127,8 @@
 		background-image: url('/src/lib/images/Register_Background.png');
 		background-size: cover;
 		background-position: center top;
-        opacity: 0.35;
-    }
+		opacity: 0.35;
+	}
 
 	.register-card {
 		position: relative;
@@ -231,15 +229,15 @@
 		font-size: 14px;
 	}
 
-    .login-text a {
-	color: #c084fc;
-	text-decoration: none;
-	font-weight: bold;
-}
+	.login-text a {
+		color: #c084fc;
+		text-decoration: none;
+		font-weight: bold;
+	}
 
-    .login-text a:hover {
-    	color: #d8b4fe;
-    }
+	.login-text a:hover {
+		color: #d8b4fe;
+	}
 
 	@media (max-width: 500px) {
 		.register-card {
