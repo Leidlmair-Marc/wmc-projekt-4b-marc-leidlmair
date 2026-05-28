@@ -804,7 +804,7 @@ export const characters = [
 	element: 'Cryo',
 	role: 'DPS',
 	rarity: 5,
-	image: 'https://enka.network/ui/UI_AvatarIcon_Skirk.png'
+	image: '/src/lib/images/Skirk.png'
 },
 
 {
@@ -894,7 +894,7 @@ export const characters = [
 	element: 'None',
 	role: 'DPS',
 	rarity: 5,
-	image: 'https://enka.network/ui/UI_AvatarIcon_Manekin.png'
+	image: '/src/lib/images/Manekin.png'
 },
 
 {

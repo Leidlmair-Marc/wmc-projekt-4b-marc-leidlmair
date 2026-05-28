@@ -62,33 +62,6 @@
 </script>
 
 <div class="layout">
-
-	<!-- SIDEBAR -->
-	<div class="sidebar">
-		<div class="logo">
-			✨
-			<span>Teyvat Synergy</span>
-		</div>
-
-		<nav>
-			<a class="active">
-				👥 Charaktere
-			</a>
-
-			<a>
-				⚔️ Team Builder
-			</a>
-
-			<a>
-				💾 Gespeicherte Teams
-			</a>
-
-			<a>
-				⚙️ Einstellungen
-			</a>
-		</nav>
-	</div>
-
 	<div class="page">
 
 		<div class="topbar">
@@ -137,74 +110,6 @@
 	.layout {
 		display: flex;
 		min-height: 100vh;
-	}
-
-	/* SIDEBAR */
-
-	.sidebar {
-		width: 240px;
-
-		background:
-			rgba(10, 12, 24, 0.95);
-
-		border-right:
-			1px solid rgba(255,255,255,0.06);
-
-		padding: 30px 20px;
-
-		display: flex;
-		flex-direction: column;
-
-		backdrop-filter: blur(10px);
-	}
-
-	.logo {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-
-		font-size: 22px;
-		font-weight: bold;
-
-		margin-bottom: 40px;
-	}
-
-	nav {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	nav a {
-		padding: 14px 18px;
-
-		border-radius: 14px;
-
-		color: #cbd5e1;
-
-		text-decoration: none;
-
-		transition: 0.2s;
-
-		cursor: pointer;
-	}
-
-	nav a:hover {
-		background:
-			rgba(255,255,255,0.05);
-	}
-
-	nav a.active {
-		background:
-			linear-gradient(
-				90deg,
-				#9333ea,
-				#7e22ce
-			);
-
-		color: white;
-
-		font-weight: bold;
 	}
 
 	/* PAGE */
