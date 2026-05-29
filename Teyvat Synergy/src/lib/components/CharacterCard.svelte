@@ -39,21 +39,16 @@
 		<h2>{character.name}</h2>
 
 		<div class="info">
-			<span
-				class="element"
-				style={`background:${getElementColor(character.element)}`}
-			>
+			<span class="element" style={`background:${getElementColor(character.element)}`}>
 				{character.element}
 			</span>
 
 			<span class="role">{character.role}</span>
 		</div>
 
-		<div
-			class="stars"
+		<div class="stars"
 			class:fiveStar={character.rarity === 5}
-			class:fourStar={character.rarity === 4}
-		>
+			class:fourStar={character.rarity === 4}>
 			{'★'.repeat(character.rarity)}
 		</div>
 	</div>

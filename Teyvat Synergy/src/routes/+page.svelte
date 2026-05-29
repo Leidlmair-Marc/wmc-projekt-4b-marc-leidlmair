@@ -16,13 +16,12 @@
 
 		const data = await response.json();
 
+	if (!response.ok) {
 		alert(data.message);
+		return;
+	}
 
-		if (response.ok) {
-			console.log(data.user);
-
-			window.location.href = '/charakter';
-		}
+	window.location.href = '/charakter';
 	}
 </script>
 

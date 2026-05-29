@@ -30,20 +30,14 @@ app.post('/register', async (req, res) => {
 			[username, email, hashedPassword],
 			function (err) {
 				if (err) {
-					return res.status(500).json({
-						message: 'Benutzer existiert bereits'
-					});
+					return res.status(500).json({message: 'Benutzer existiert bereits'});
 				}
 
-				res.json({
-					message: 'Registrierung erfolgreich'
-				});
+				res.json({message: 'Registrierung erfolgreich'});
 			}
 		);
 	} catch (error) {
-		res.status(500).json({
-			message: 'Serverfehler'
-		});
+		res.status(500).json({message: 'Serverfehler'});
 	}
 });
 
@@ -57,15 +51,11 @@ app.post('/login', (req, res) => {
 		[login, login],
 		async (err, user) => {
 			if (err) {
-				return res.status(500).json({
-					message: 'Serverfehler'
-				});
+				return res.status(500).json({message: 'Serverfehler'});
 			}
 
 			if (!user) {
-				return res.status(401).json({
-					message: 'Benutzer nicht gefunden'
-				});
+				return res.status(401).json({message: 'Benutzer nicht gefunden'});
 			}
 
 			const validPassword = await bcrypt.compare(
@@ -74,9 +64,7 @@ app.post('/login', (req, res) => {
 			);
 
 			if (!validPassword) {
-				return res.status(401).json({
-					message: 'Falsches Passwort'
-				});
+				return res.status(401).json({message: 'Falsches Passwort'});
 			}
 
 			res.json({
@@ -90,6 +78,103 @@ app.post('/login', (req, res) => {
 		}
 	);
 });
+
+app.post('/teams', (req, res) => {
+
+	const {
+		userId,
+		teamName,
+		characters
+	} = req.body;
+
+	db.run(
+		`
+		INSERT INTO teams
+		(user_id, team_name)
+		VALUES (?, ?)
+		`,
+		[userId, teamName],
+
+		function (err) {
+
+			if (err) {
+				return res.status(500).json({message: 'Fehler'});
+			}
+
+			const teamId = this.lastID;
+
+			for (
+				let i = 0;
+				i < characters.length;
+				i++
+			) {
+
+				db.run(
+					`
+					INSERT INTO
+					team_characters
+					(team_id,
+					character_id,
+					slot)
+					VALUES
+					(?, ?, ?)
+					`,
+					[
+						teamId,
+						characters[i],
+						i + 1
+					]
+				);
+			}
+			res.json({message: 'Team gespeichert'});
+		}
+	);
+});
+
+app.get('/teams/:userId', (req, res) => {
+
+		db.all(
+			`
+			SELECT *
+			FROM teams
+			WHERE user_id = ?
+			`,
+			[
+				req.params.userId
+			],
+
+			(err, teams) => {
+				res.json(teams);
+			}
+		);
+	}
+);	
+
+app.delete(
+	'/teams/:id',
+
+	(req, res) => {
+
+		db.run(
+			`
+			DELETE FROM teams
+			WHERE id = ?
+			`,
+			[req.params.id]
+		);
+
+		db.run(
+			`
+			DELETE FROM
+			team_characters
+			WHERE team_id = ?
+			`,
+			[req.params.id]
+		);
+
+		res.json({message:'Gelöscht'});
+	}
+);
 
 app.listen(3000, () => {
 	console.log('Server läuft auf Port 3000');

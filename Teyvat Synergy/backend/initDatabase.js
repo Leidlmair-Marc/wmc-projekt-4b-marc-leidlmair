@@ -15,7 +15,6 @@ db.serialize(() => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             element TEXT NOT NULL,
-            weapon TEXT NOT NULL,
             role TEXT NOT NULL,
             rarity INTEGER NOT NULL,
             image TEXT

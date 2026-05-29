@@ -3,6 +3,7 @@
 	import { allReactions } from '$lib/data/reactions.js';
 
 	let team = $state([]);
+	let teamName = $state('');
 
 	function addCharacter(character) {
 		if (team.length >= 4) return;
@@ -24,7 +25,6 @@
 				result.push(character.role);
 			}
 		}
-
 		return result;
 	});
 
@@ -34,11 +34,33 @@
 		const result = [];
 
 		for (const reaction of allReactions) {
-			const active = reaction.elements.every((element) =>
-				elements.includes(element),
-			);
+			if (reaction.elements) {
+				const active = reaction.elements.every((element) =>
+					elements.includes(element),
+				);
 
-			if (active && !result.some((r) => r.name === reaction.name)) {
+				if (active) {
+					result.push(reaction);
+				}
+
+			} else if (reaction.required) {
+				const hasRequired = reaction.required.every((element) =>
+					elements.includes(element),
+				);
+
+				if (!hasRequired) {
+					continue;
+				}
+
+				if (reaction.oneOf) {
+					const hasOneOf = reaction.oneOf.some((element) =>
+						elements.includes(element),
+					);
+
+					if (!hasOneOf) {
+						continue;
+					}
+				}
 				result.push(reaction);
 			}
 		}
@@ -52,15 +74,13 @@
 				character.name === 'Columbina',
 		);
 
-		if (
-			elements.includes('Hydro') &&
+		if (elements.includes('Hydro') &&
 			elements.includes('Electro') &&
 			hasLunarChargedCharacter
 		) {
 			result.push({
 				name: 'Lunar-Charged',
-				description:
-					'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
+				description: 'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
 			});
 		}
 
@@ -73,15 +93,13 @@
 				character.name === 'Columbina',
 		);
 
-		if (
-			elements.includes('Hydro') &&
+		if (elements.includes('Hydro') &&
 			elements.includes('Dendro') &&
 			hasLunarBloomCharacter
 		) {
 			result.push({
 				name: 'Lunar-Bloom',
-				description:
-					'Verbesserte Version von Blühen mit Lunar-Schaden.',
+				description: 'Verbesserte Version von Blühen mit Lunar-Schaden.',
 			});
 		}
 
@@ -94,20 +112,47 @@
 				character.name === 'Columbina',
 		);
 
-		if (
-			elements.includes('Geo') &&
+		if (elements.includes('Geo') &&
 			elements.includes('Hydro') &&
 			hasLunarCrystallizeCharacter
 		) {
 			result.push({
 				name: 'Lunar-Crystallize',
-				description:
-					'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
+				description: 'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
 			});
 		}
-
 		return result;
 	});
+
+	async function saveTeam() {
+		if (team.length !== 4) {
+			alert('Bitte 4 Charaktere auswählen.');
+			return;
+		}
+
+		if (!teamName.trim()) {
+			alert('Bitte einen Teamnamen eingeben.');
+			return;
+		}
+
+		const response = await fetch('http://localhost:3000/teams', {
+			method: 'POST',
+
+			headers: {
+				'Content-Type': 'application/json',
+			},
+
+			body: JSON.stringify({
+				userId: 1,
+				teamName,
+				characters: team.map((character) => character.id),
+			}),
+		});
+
+		const data = await response.json();
+
+		alert(data.message);
+	}
 </script>
 
 <div class="page">
@@ -174,10 +219,7 @@
 
 		<div class="characters">
 			{#each characters as character}
-				<button
-					class="character"
-					onclick={() => addCharacter(character)}
-				>
+				<button class="character" onclick={() => addCharacter(character)}>
 					<img src={character.image} alt={character.name} />
 				</button>
 			{/each}

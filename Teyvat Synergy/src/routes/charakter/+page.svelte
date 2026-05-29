@@ -48,13 +48,11 @@
 		characters.filter((character) => {
 			const matchesSearch =
 				character.name
-					.toLowerCase()
-					.includes(search.toLowerCase());
+						 .toLowerCase()
+						 .includes(search.toLowerCase());
 
-			const matchesElement =
-				selectedElement === 'Alle'
-					? true
-					: character.element === selectedElement;
+			if (selectedElement === 'Alle') {return true;} 
+			else {return character.element === selectedElement;}
 
 			return matchesSearch && matchesElement;
 		})
@@ -67,20 +65,15 @@
 		<div class="topbar">
 			<h1>Charaktere</h1>
 
-			<input
-				type="text"
-				placeholder="Nach Charakter suchen..."
-				bind:value={search}
-			/>
+			<input type="text" placeholder="Nach Charakter suchen..."
+				bind:value={search}/>
 		</div>
 
 		<div class="filters">
 			{#each elements as element}
-				<button
-					class:selected={selectedElement === element}
+				<button class:selected={selectedElement === element}
 					style={`background:${getElementColor(element)}`}
-					onclick={() => selectedElement = element}
-				>
+					onclick={() => selectedElement = element}>
 					{element}
 				</button>
 			{/each}
