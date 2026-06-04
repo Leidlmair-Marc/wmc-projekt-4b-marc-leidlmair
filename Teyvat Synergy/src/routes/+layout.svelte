@@ -17,11 +17,11 @@
 			Team Builder
 		</a>
 
-		<a href="/charakter">
+		<a href="/savedTeams">
 			Gespeicherte Teams
 		</a>
 
-		<a href="/charakter">
+		<a href="/settings">
 			Profil
 		</a>
 	</div>

@@ -1,4 +1,5 @@
 import db from './database.js';
+import { characters } from '../src/lib/data/characters.js';
 
 db.serialize(() => {
 	db.run(`
@@ -20,6 +21,46 @@ db.serialize(() => {
             image TEXT
         )
     `);
+
+    db.get(
+	'SELECT COUNT(*) as count FROM characters',
+	(err, row) => {
+
+		if (row.count === 0) {
+
+			for (const character of characters) {
+
+				db.run(
+					`
+					INSERT INTO characters
+					(
+						id,
+						name,
+						element,
+						role,
+						rarity,
+						image
+					)
+					VALUES
+					(?, ?, ?, ?, ?, ?)
+					`,
+					[
+						character.id,
+						character.name,
+						character.element,
+						character.role,
+						character.rarity,
+						character.image
+					]
+				);
+			}
+
+			console.log(
+				'Charaktere importiert'
+			);
+		}
+	}
+);
 
 	db.run(`
         CREATE TABLE IF NOT EXISTS teams (

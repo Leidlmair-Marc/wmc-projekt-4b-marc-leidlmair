@@ -1,9 +1,25 @@
 <script>
 	import { characters } from '$lib/data/characters.js';
 	import { allReactions } from '$lib/data/reactions.js';
+	import { onMount } from 'svelte';
 
 	let team = $state([]);
 	let teamName = $state('');
+
+	onMount(() => {
+
+	const savedTeam = localStorage.getItem('editTeam');
+
+	if (!savedTeam) return;
+
+		const loadedTeam = JSON.parse(savedTeam);
+
+		team = loadedTeam.characters;
+
+		teamName =loadedTeam.team_name;
+
+		localStorage.removeItem('editTeam');
+	});
 
 	function addCharacter(character) {
 		if (team.length >= 4) return;
@@ -42,7 +58,6 @@
 				if (active) {
 					result.push(reaction);
 				}
-
 			} else if (reaction.required) {
 				const hasRequired = reaction.required.every((element) =>
 					elements.includes(element),
@@ -74,13 +89,15 @@
 				character.name === 'Columbina',
 		);
 
-		if (elements.includes('Hydro') &&
+		if (
+			elements.includes('Hydro') &&
 			elements.includes('Electro') &&
 			hasLunarChargedCharacter
 		) {
 			result.push({
 				name: 'Lunar-Charged',
-				description: 'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
+				description:
+					'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
 			});
 		}
 
@@ -93,13 +110,15 @@
 				character.name === 'Columbina',
 		);
 
-		if (elements.includes('Hydro') &&
+		if (
+			elements.includes('Hydro') &&
 			elements.includes('Dendro') &&
 			hasLunarBloomCharacter
 		) {
 			result.push({
 				name: 'Lunar-Bloom',
-				description: 'Verbesserte Version von Blühen mit Lunar-Schaden.',
+				description:
+					'Verbesserte Version von Blühen mit Lunar-Schaden.',
 			});
 		}
 
@@ -112,13 +131,15 @@
 				character.name === 'Columbina',
 		);
 
-		if (elements.includes('Geo') &&
+		if (
+			elements.includes('Geo') &&
 			elements.includes('Hydro') &&
 			hasLunarCrystallizeCharacter
 		) {
 			result.push({
 				name: 'Lunar-Crystallize',
-				description: 'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
+				description:
+					'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
 			});
 		}
 		return result;
@@ -158,6 +179,12 @@
 <div class="page">
 	<div class="team-panel">
 		<h1>Team Builder</h1>
+
+		<div class="save-team">
+			<input type="text" bind:value={teamName} placeholder="Teamname" />
+
+			<button onclick={saveTeam}> Team speichern </button>
+		</div>
 
 		<div class="team-header">
 			<span>{team.length}/4</span>
@@ -219,7 +246,10 @@
 
 		<div class="characters">
 			{#each characters as character}
-				<button class="character" onclick={() => addCharacter(character)}>
+				<button
+					class="character"
+					onclick={() => addCharacter(character)}
+				>
 					<img src={character.image} alt={character.name} />
 				</button>
 			{/each}
@@ -231,6 +261,30 @@
 	.page {
 		padding: 30px;
 		color: white;
+	}
+
+	.save-team {
+		display: flex;
+		gap: 10px;
+		margin-bottom: 20px;
+	}
+
+	.save-team input {
+		flex: 1;
+		padding: 12px;
+		border-radius: 12px;
+		border: none;
+		background: rgba(255,255,255,0.08);
+		color: white;
+	}
+
+	.save-team button {
+		padding: 12px 20px;
+		border: none;
+		border-radius: 12px;
+		background: #9333ea;
+		color: white;
+		cursor: pointer;
 	}
 
 	.team-panel {

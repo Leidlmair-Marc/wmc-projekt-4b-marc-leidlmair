@@ -30,14 +30,14 @@ app.post('/register', async (req, res) => {
 			[username, email, hashedPassword],
 			function (err) {
 				if (err) {
-					return res.status(500).json({message: 'Benutzer existiert bereits'});
+					return res.status(500).json({ message: 'Benutzer existiert bereits' });
 				}
 
-				res.json({message: 'Registrierung erfolgreich'});
+				res.json({ message: 'Registrierung erfolgreich' });
 			}
 		);
 	} catch (error) {
-		res.status(500).json({message: 'Serverfehler'});
+		res.status(500).json({ message: 'Serverfehler' });
 	}
 });
 
@@ -51,11 +51,11 @@ app.post('/login', (req, res) => {
 		[login, login],
 		async (err, user) => {
 			if (err) {
-				return res.status(500).json({message: 'Serverfehler'});
+				return res.status(500).json({ message: 'Serverfehler' });
 			}
 
 			if (!user) {
-				return res.status(401).json({message: 'Benutzer nicht gefunden'});
+				return res.status(401).json({ message: 'Benutzer nicht gefunden' });
 			}
 
 			const validPassword = await bcrypt.compare(
@@ -64,7 +64,7 @@ app.post('/login', (req, res) => {
 			);
 
 			if (!validPassword) {
-				return res.status(401).json({message: 'Falsches Passwort'});
+				return res.status(401).json({ message: 'Falsches Passwort' });
 			}
 
 			res.json({
@@ -98,7 +98,7 @@ app.post('/teams', (req, res) => {
 		function (err) {
 
 			if (err) {
-				return res.status(500).json({message: 'Fehler'});
+				return res.status(500).json({ message: 'Fehler' });
 			}
 
 			const teamId = this.lastID;
@@ -126,34 +126,87 @@ app.post('/teams', (req, res) => {
 					]
 				);
 			}
-			res.json({message: 'Team gespeichert'});
+			res.json({ message: 'Team gespeichert' });
 		}
 	);
 });
 
 app.get('/teams/:userId', (req, res) => {
 
-		db.all(
-			`
-			SELECT *
-			FROM teams
-			WHERE user_id = ?
-			`,
-			[
-				req.params.userId
-			],
+	db.all(
+		`
+		SELECT *
+		FROM teams
+		WHERE user_id = ?
+		`,
+		[req.params.userId],
 
-			(err, teams) => {
-				res.json(teams);
+		(err, teams) => {
+
+			if (err) {
+				return res.status(500).json({message: 'Fehler'});
 			}
-		);
-	}
-);	
 
-app.delete(
-	'/teams/:id',
+			const promises = teams.map((team) => {
 
-	(req, res) => {
+				return new Promise((resolve) => {
+
+					db.all(
+						`
+						SELECT c.*
+						FROM team_characters tc
+						JOIN characters c
+						ON tc.character_id = c.id
+						WHERE tc.team_id = ?
+						ORDER BY tc.slot
+						`,
+						[team.id],
+
+						(err, characters) => {
+
+							resolve({
+								...team,
+								characters
+							});
+						}
+					);
+				});
+			});
+
+			Promise.all(promises)
+				.then((result) => {
+					res.json(result);
+				});
+		}
+	);
+});
+
+app.put('/teams/:id', (req, res) => {
+
+	const { teamName } = req.body;
+
+	db.run(
+		`
+		UPDATE teams	
+		SET team_name = ?
+		WHERE id = ?
+		`,
+		[
+			teamName,
+			req.params.id
+		],
+		(err) => {
+
+			if (err) {
+				return res.status(500).json({message: 'Fehler'});
+			}
+
+			res.json({message: 'Team umbenannt'});
+		}
+	);
+});
+
+app.delete('/teams/:id', (req, res) => {
 
 		db.run(
 			`
@@ -172,9 +225,77 @@ app.delete(
 			[req.params.id]
 		);
 
-		res.json({message:'Gelöscht'});
+		res.json({ message: 'Gelöscht' });
 	}
 );
+
+app.delete('/users/:id', (req, res) => {
+
+	const userId = req.params.id;
+
+	db.run(
+		`
+		DELETE FROM team_characters
+
+		WHERE team_id IN (
+
+			SELECT id
+			FROM teams
+
+			WHERE user_id = ?
+		)
+		`,
+		[userId],
+		(err) => {
+
+			if (err) {
+				return res.status(500).json({
+					message: 'Fehler beim Löschen der Team-Charaktere'
+				});
+			}
+
+			db.run(
+				`
+				DELETE FROM teams
+
+				WHERE user_id = ?
+				`,
+				[userId],
+
+				(err) => {
+
+					if (err) {
+						return res.status(500).json({
+							message: 'Fehler beim Löschen der Teams'
+						});
+					}
+
+					db.run(
+						`
+						DELETE FROM users
+
+						WHERE id = ?
+						`,
+						[userId],
+
+						(err) => {
+
+							if (err) {
+								return res.status(500).json({
+									message: 'Fehler beim Löschen des Accounts'
+								});
+							}
+
+							res.json({
+								message: 'Account gelöscht'
+							});
+						}
+					);
+				}
+			);
+		}
+	);
+});
 
 app.listen(3000, () => {
 	console.log('Server läuft auf Port 3000');
