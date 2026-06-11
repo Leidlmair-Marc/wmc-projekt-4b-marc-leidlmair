@@ -1,12 +1,23 @@
 <script>
 	import CharacterCard from '$lib/components/CharacterCard.svelte';
 	import { characters } from '$lib/data/characters.js';
+	import { onMount } from 'svelte';
+	import { translations } from '$lib/data/translations.js';
 
 	let search = $state('');
 	let selectedElement = $state('Alle');
+	let language = $state('de');
 
-	const elements = [
-		'Alle',
+	let t = $derived(translations[language]);
+
+	onMount(() => {
+		const user = JSON.parse(localStorage.getItem('user'));
+
+		language = user?.language ?? 'de';
+	});
+
+	let elements = $derived([
+		t.all,
 		'Pyro',
 		'Hydro',
 		'Electro',
@@ -14,7 +25,7 @@
 		'Geo',
 		'Dendro',
 		'Anemo'
-	];
+	]);
 
 	function getElementColor(element) {
 	switch (element) {
@@ -63,9 +74,9 @@
 	<div class="page">
 
 		<div class="topbar">
-			<h1>Charaktere</h1>
+			<h1>{t.charactersTitle}</h1>
 
-			<input type="text" placeholder="Nach Charakter suchen..."
+			<input type="text" placeholder={t.searchCharacters}
 				bind:value={search}/>
 		</div>
 

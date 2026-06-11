@@ -3,13 +3,20 @@
 	import { allReactions } from '$lib/data/reactions.js';
 	import { onMount } from 'svelte';
 	import { io } from 'socket.io-client';
+	import { translations } from '$lib/data/translations.js';
 
 	const socket = io('http://localhost:3000');
 	let team = $state([]);
 	let teamName = $state('');
 	let editingTeamId = $state(null);
+	let language = $state('de');
+	let t = $derived(translations[language]);
 
 	onMount(() => {
+		const user = JSON.parse(localStorage.getItem('user'));
+
+		language = user?.language ?? 'de';
+
 		const savedTeam = localStorage.getItem('editTeam');
 
 		if (savedTeam) {
@@ -112,7 +119,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Charged',
-				description:'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
+				description: t.lunarCharged,
 			});
 		}
 
@@ -132,7 +139,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Bloom',
-				description:'Verbesserte Version von Blühen mit Lunar-Schaden.',
+				description: t.lunarBloom,
 			});
 		}
 
@@ -152,7 +159,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Crystallize',
-				description:'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
+				description: t.lunarCrystallize,
 			});
 		}
 		return result;
@@ -160,12 +167,12 @@
 
 	async function saveTeam() {
 		if (team.length !== 4) {
-			alert('Bitte 4 Charaktere auswählen.');
+			alert(t.select4Characters);
 			return;
 		}
 
 		if (!teamName.trim()) {
-			alert('Bitte einen Teamnamen eingeben.');
+			alert(t.enterTeamName);
 			return;
 		}
 
@@ -175,7 +182,7 @@
 				{
 					method: 'PUT',
 
-					headers: {'Content-Type': 'application/json',},
+					headers: { 'Content-Type': 'application/json' },
 
 					body: JSON.stringify({
 						teamName,
@@ -186,8 +193,6 @@
 			);
 
 			const data = await response.json();
-
-			alert(data.message);
 
 			editingTeamId = null;
 		} else {
@@ -214,9 +219,9 @@
 		<h1>Team Builder</h1>
 
 		<div class="save-team">
-			<input type="text" bind:value={teamName} placeholder="Teamname" />
+			<input type="text" bind:value={teamName} placeholder={t.teamName} />
 
-			<button onclick={saveTeam}> Team speichern </button>
+			<button onclick={saveTeam}> {t.saveTeam} </button>
 		</div>
 
 		<div class="team-header">
@@ -244,7 +249,7 @@
 		</div>
 
 		<div class="section">
-			<h2>Team Rollen</h2>
+			<h2>{t.teamRoles}</h2>
 
 			<div class="badges">
 				{#each roles as role}
@@ -256,18 +261,14 @@
 		</div>
 
 		<div class="section">
-			<h2>Team Reaktionen</h2>
+			<h2>{t.teamReactions}</h2>
 
 			<div class="badges">
 				{#each reactions as reaction}
 					<div class="reaction-card">
-						<h4>
-							{reaction.name}
-						</h4>
+						<h4> {reaction.name[language]} </h4>
 
-						<p>
-							{reaction.description}
-						</p>
+						<p> {reaction.description[language]} </p>
 					</div>
 				{/each}
 			</div>
@@ -275,7 +276,7 @@
 	</div>
 
 	<div class="character-list">
-		<h2>Charaktere hinzufügen</h2>
+		<h2>{t.addCharacter}</h2>
 
 		<div class="characters">
 			{#each characters as character}

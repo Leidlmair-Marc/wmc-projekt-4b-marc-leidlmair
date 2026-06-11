@@ -411,6 +411,85 @@ app.put('/users/:id/language', (req, res) => {
 	);
 });
 
+app.get('/users/:id/stats', (req, res) => {
+
+	const userId = req.params.id;
+
+	db.all(
+		`
+		SELECT c.element, c.role
+		FROM teams t
+
+		JOIN team_characters tc
+		ON t.id = tc.team_id
+
+		JOIN characters c
+		ON tc.character_id = c.id
+
+		WHERE t.user_id = ?
+		`,
+		[userId],
+		(err, rows) => {
+
+			if (err) {
+				return res.status(500).json({
+					message: 'Fehler'
+				});
+			}
+
+			const elementCount = {};
+			const roleCount = {};
+
+			for (const row of rows) {
+
+				elementCount[row.element] =
+					(elementCount[row.element] || 0) + 1;
+
+				roleCount[row.role] =
+					(roleCount[row.role] || 0) + 1;
+			}
+
+			const favoriteElement =
+				Object.keys(elementCount)
+					.sort((a, b) =>
+						elementCount[b] -
+						elementCount[a]
+					)[0] || '-';
+
+			const favoriteRole =
+				Object.keys(roleCount)
+					.sort((a, b) =>
+						roleCount[b] -
+						roleCount[a]
+					)[0] || '-';
+
+			db.get(
+				`
+				SELECT COUNT(*)
+				AS count
+
+				FROM teams
+
+				WHERE user_id = ?
+				`,
+				[userId],
+
+				(err, result) => {
+
+					res.json({
+						teamCount:
+							result.count,
+
+						favoriteElement,
+
+						favoriteRole
+					});
+				}
+			);
+		}
+	);
+});
+
 io.on('connection', (socket) => {
 
 	console.log(

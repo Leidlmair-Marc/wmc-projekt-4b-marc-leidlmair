@@ -1,7 +1,11 @@
 <script>
     import { onMount } from 'svelte';
+    import { translations } from '$lib/data/translations.js';
 
     let teams = $state([]);
+    let language = $state('de');
+
+    let t = $derived(translations[language]);
 
     async function loadTeams() {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -12,7 +16,7 @@
     }
 
     async function deleteTeam(id) {
-        if (!confirm('Möchtest du dieses Team löschen?')) {
+        if (!confirm(t.deleteTeamConfirm)) {
             return;
         }
 
@@ -24,7 +28,7 @@
     }
 
     async function renameTeam(team) {
-        const newName = prompt('Neuer Teamname:', team.team_name);
+        const newName = prompt(t.renameTeamPrompt, team.team_name);
 
         if (!newName) return;
 
@@ -56,17 +60,24 @@
         window.location.href = '/teamBuilder';
     }
 
-    onMount(loadTeams);
+    onMount(() => {
+
+	const user = JSON.parse(localStorage.getItem('user'));
+
+	language = user?.language ?? 'de';
+
+	loadTeams();
+});
 </script>
 
 <div class="page">
-    <h1>Gespeicherte Teams</h1>
+    <h1>{t.savedTeamsTitle}</h1>
 
-    <p class="subtitle">Verwalte deine gespeicherten Teams.</p>
+    <p class="subtitle"> {t.manageTeams} </p>
 
     <div class="teams">
         {#if teams.length === 0}
-            <div class="empty">Noch keine Teams gespeichert.</div>
+            <div class="empty"> {t.noSavedTeams} </div>
         {/if}
 
         {#each teams as team}
@@ -79,10 +90,7 @@
                     <div class="team-characters">
                         {#each team.characters as character}
                             <div class="character">
-                                <img
-                                    src={character.image}
-                                    alt={character.name}
-                                />
+                                <img src={character.image} alt={character.name}/>
 
                                 <span>{character.name}</span>
                             </div>
@@ -91,17 +99,9 @@
                 </div>
 
                 <div class="actions">
-                    <button class="edit" onclick={() => editTeam(team)}
-                        >Bearbeiten</button
-                    >
-
-                    <button class="rename" onclick={() => renameTeam(team)}>
-                        Umbenennen</button
-                    >
-
-                    <button class="delete" onclick={() => deleteTeam(team.id)}
-                        >Löschen</button
-                    >
+                    <button class="edit" onclick={() => editTeam(team)}> {t.editTeam} </button>
+                    <button class="rename" onclick={() => renameTeam(team)}> {t.renameTeam} </button>
+                    <button class="delete" onclick={() => deleteTeam(team.id)}> {t.deleteTeam} </button>
                 </div>
             </div>
         {/each}
