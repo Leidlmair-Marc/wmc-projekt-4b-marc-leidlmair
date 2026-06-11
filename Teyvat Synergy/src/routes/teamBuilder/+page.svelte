@@ -2,23 +2,35 @@
 	import { characters } from '$lib/data/characters.js';
 	import { allReactions } from '$lib/data/reactions.js';
 	import { onMount } from 'svelte';
+	import { io } from 'socket.io-client';
 
+	const socket = io('http://localhost:3000');
 	let team = $state([]);
 	let teamName = $state('');
+	let editingTeamId = $state(null);
 
 	onMount(() => {
+		const savedTeam = localStorage.getItem('editTeam');
 
-	const savedTeam = localStorage.getItem('editTeam');
+		if (savedTeam) {
+			const loadedTeam = JSON.parse(savedTeam);
 
-	if (!savedTeam) return;
+			team = loadedTeam.characters;
 
-		const loadedTeam = JSON.parse(savedTeam);
+			teamName = loadedTeam.team_name;
 
-		team = loadedTeam.characters;
+			editingTeamId = loadedTeam.id;
 
-		teamName =loadedTeam.team_name;
+			localStorage.removeItem('editTeam');
+		}
 
-		localStorage.removeItem('editTeam');
+		socket.on('teamUpdated', (newTeam) => {
+			team = newTeam;
+		});
+
+		return () => {
+			socket.off('teamUpdated');
+		};
 	});
 
 	function addCharacter(character) {
@@ -27,10 +39,14 @@
 		if (team.some((member) => member.id === character.id)) return;
 
 		team.push(character);
+
+		socket.emit('teamUpdated', team);
 	}
 
 	function removeCharacter(id) {
 		team = team.filter((member) => member.id !== id);
+
+		socket.emit('teamUpdated', team);
 	}
 
 	let roles = $derived.by(() => {
@@ -96,8 +112,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Charged',
-				description:
-					'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
+				description:'Verbesserte Version von Elektrogeladen mit Lunar-Schaden.',
 			});
 		}
 
@@ -117,8 +132,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Bloom',
-				description:
-					'Verbesserte Version von Blühen mit Lunar-Schaden.',
+				description:'Verbesserte Version von Blühen mit Lunar-Schaden.',
 			});
 		}
 
@@ -138,8 +152,7 @@
 		) {
 			result.push({
 				name: 'Lunar-Crystallize',
-				description:
-					'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
+				description:'Verbesserte Version von Kristallisation mit zusätzlichem Lunar-Schaden.',
 			});
 		}
 		return result;
@@ -156,23 +169,43 @@
 			return;
 		}
 
-		const response = await fetch('http://localhost:3000/teams', {
-			method: 'POST',
+		if (editingTeamId) {
+			const response = await fetch(
+				`http://localhost:3000/teams/${editingTeamId}/full`,
+				{
+					method: 'PUT',
 
-			headers: {
-				'Content-Type': 'application/json',
-			},
+					headers: {'Content-Type': 'application/json',},
 
-			body: JSON.stringify({
-				userId: 1,
-				teamName,
-				characters: team.map((character) => character.id),
-			}),
-		});
+					body: JSON.stringify({
+						teamName,
 
-		const data = await response.json();
+						characters: team.map((character) => character.id),
+					}),
+				},
+			);
 
-		alert(data.message);
+			const data = await response.json();
+
+			alert(data.message);
+
+			editingTeamId = null;
+		} else {
+			const user = JSON.parse(localStorage.getItem('user'));
+
+			const response = await fetch('http://localhost:3000/teams', {
+				method: 'POST',
+
+				headers: { 'Content-Type': 'application/json' },
+
+				body: JSON.stringify({
+					userId: user.id,
+					teamName,
+					characters: team.map((character) => character.id),
+				}),
+			});
+			const data = await response.json();
+		}
 	}
 </script>
 
@@ -274,7 +307,7 @@
 		padding: 12px;
 		border-radius: 12px;
 		border: none;
-		background: rgba(255,255,255,0.08);
+		background: rgba(255, 255, 255, 0.08);
 		color: white;
 	}
 

@@ -4,7 +4,9 @@
     let teams = $state([]);
 
     async function loadTeams() {
-        const response = await fetch('http://localhost:3000/teams/1');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const response = await fetch(`http://localhost:3000/teams/${user.id}`);
 
         teams = await response.json();
     }
@@ -22,35 +24,34 @@
     }
 
     async function renameTeam(team) {
+        const newName = prompt('Neuer Teamname:', team.team_name);
 
-	const newName = prompt(
-		'Neuer Teamname:',
-		team.team_name
-	);
+        if (!newName) return;
 
-	if (!newName) return;
+        await fetch(`http://localhost:3000/teams/${team.id}`, {
+            method: 'PUT',
 
-	await fetch(
-		`http://localhost:3000/teams/${team.id}`,
-		{
-			method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
 
-			headers: {
-				'Content-Type':
-					'application/json'
-			},
+            body: JSON.stringify({
+                teamName: newName,
+            }),
+        });
 
-			body: JSON.stringify({
-				teamName: newName
-			})
-		}
-	);
-
-	loadTeams();
-}
+        loadTeams();
+    }
 
     function editTeam(team) {
-        localStorage.setItem('editTeam', JSON.stringify(team));
+        localStorage.setItem(
+            'editTeam',
+            JSON.stringify({
+                id: team.id,
+                team_name: team.team_name,
+                characters: team.characters,
+            }),
+        );
 
         window.location.href = '/teamBuilder';
     }
@@ -78,7 +79,10 @@
                     <div class="team-characters">
                         {#each team.characters as character}
                             <div class="character">
-                                <img src={character.image} alt={character.name}/>
+                                <img
+                                    src={character.image}
+                                    alt={character.name}
+                                />
 
                                 <span>{character.name}</span>
                             </div>
@@ -87,11 +91,17 @@
                 </div>
 
                 <div class="actions">
-                    <button class="edit" onclick={() => editTeam(team)}>Bearbeiten</button>
+                    <button class="edit" onclick={() => editTeam(team)}
+                        >Bearbeiten</button
+                    >
 
-                    <button class="rename" onclick={() => renameTeam(team)}> Umbenennen</button>
+                    <button class="rename" onclick={() => renameTeam(team)}>
+                        Umbenennen</button
+                    >
 
-                    <button class="delete" onclick={() => deleteTeam(team.id)}>Löschen</button>
+                    <button class="delete" onclick={() => deleteTeam(team.id)}
+                        >Löschen</button
+                    >
                 </div>
             </div>
         {/each}

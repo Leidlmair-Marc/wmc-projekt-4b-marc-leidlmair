@@ -2,20 +2,25 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
 	import { translations } from '$lib/data/translations.js';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
+
 	let showNavbar = $derived(
-		page.url.pathname !== '/' &&
-		page.url.pathname !== '/register'
+		page.url.pathname !== '/' && page.url.pathname !== '/register',
 	);
 
-	let language = 'de';
-	const t = translations[language];
-	if (typeof window !== 'undefined') {
+	let language = $state('de');
 
+	let t = $derived.by(() => {
+		return translations[language];
+	});
+
+	onMount(() => {
 		const user = JSON.parse(localStorage.getItem('user'));
+
 		language = user?.language || 'de';
-}
+	});
 </script>
 
 {#if showNavbar}
@@ -57,13 +62,11 @@
 
 		padding: 0 40px;
 
-		background:
-			rgba(10, 12, 24, 0.95);
+		background: rgba(10, 12, 24, 0.95);
 
 		backdrop-filter: blur(10px);
 
-		border-bottom:
-			1px solid rgba(255,255,255,0.08);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
 		z-index: 999;
 	}

@@ -1,37 +1,47 @@
-import { writable } from 'svelte/store';
-
-export const language = writable('de');
+export const languageState = {
+	current: 'de'
+};
 
 export const translations = {
 	de: {
-		login: 'Anmelden',
-		register: 'Registrieren',
-		characters: 'Charaktere',
-		teamBuilder: 'Team Builder',
-		savedTeams: 'Gespeicherte Teams',
-		settings: 'Einstellungen',
-		username: 'Benutzername',
-        username_email: 'Benutzername oder E-Mail',
-		email: 'E-Mail',
-		password: 'Passwort',
-		deleteAccount: 'Account löschen',
-		save: 'Speichern',
-		language: 'Sprache'
-	},
+	characters: 'Charaktere',
+	teamBuilder: 'Team Builder',
+	savedTeams: 'Gespeicherte Teams',
+	settings: 'Einstellungen',
 
-	en: {
-		login: 'Login',
-		register: 'Register',
-		characters: 'Characters',
-		teamBuilder: 'Team Builder',
-		savedTeams: 'Saved Teams',
-		settings: 'Settings',
-		username: 'Username',
-		username_email: 'Username or Email',
-		email: 'Email',
-		password: 'Password',
-		deleteAccount: 'Delete Account',
-		save: 'Save',
-		language: 'Language'
-	}
+	addCharacter: 'Charakter hinzufügen',
+	teamRoles: 'Team Rollen',
+	teamReactions: 'Team Reaktionen',
+
+	account: 'Konto',
+	language: 'Sprache',
+	save: 'Speichern',
+	deleteAccount: 'Account löschen',
+
+	statistics: 'Statistiken',
+	savedTeamsCount: 'Gespeicherte Teams',
+	favoriteElement: 'Lieblings-Element',
+	mostUsedRole: 'Meistgenutzte Rolle'
+},
+
+en: {
+	characters: 'Characters',
+	teamBuilder: 'Team Builder',
+	savedTeams: 'Saved Teams',
+	settings: 'Settings',
+
+	addCharacter: 'Add Character',
+	teamRoles: 'Team Roles',
+	teamReactions: 'Team Reactions',
+
+	account: 'Account',
+	language: 'Language',
+	save: 'Save',
+	deleteAccount: 'Delete Account',
+
+	statistics: 'Statistics',
+	savedTeamsCount: 'Saved Teams',
+	favoriteElement: 'Favorite Element',
+	mostUsedRole: 'Most Used Role'
+}
 };

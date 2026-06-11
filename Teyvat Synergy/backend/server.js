@@ -4,11 +4,25 @@ import bcrypt from 'bcrypt';
 
 import db from './database.js';
 import './initDatabase.js';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+	cors: {
+		origin: 'http://localhost:5173'
+	}
+});
+
+server.listen(3000, () => {
+	console.log('Server läuft');
+});
 
 app.post('/register', async (req, res) => {
 	const { username, email, password } = req.body;
@@ -207,6 +221,79 @@ app.put('/teams/:id', (req, res) => {
 	);
 });
 
+app.put('/teams/:id/full', (req, res) => {
+
+	const {
+		teamName,
+		characters
+	} = req.body;
+
+	db.run(
+		`
+		UPDATE teams
+		SET team_name = ?
+		WHERE id = ?
+		`,
+		[
+			teamName,
+			req.params.id
+		],
+		(err) => {
+
+			if (err) {
+				return res.status(500).json({
+					message: 'Fehler'
+				});
+			}
+
+			db.run(
+				`
+				DELETE FROM team_characters
+				WHERE team_id = ?
+				`,
+				[req.params.id],
+				(err) => {
+
+					if (err) {
+						return res.status(500).json({
+							message: 'Fehler'
+						});
+					}
+
+					for (
+						let i = 0;
+						i < characters.length;
+						i++
+					) {
+
+						db.run(
+							`
+							INSERT INTO team_characters
+							(
+								team_id,
+								character_id,
+								slot
+							)
+							VALUES (?, ?, ?)
+							`,
+							[
+								req.params.id,
+								characters[i],
+								i + 1
+							]
+						);
+					}
+
+					res.json({
+						message:
+							'Team aktualisiert'
+					});
+				}
+			);
+		}
+	);
+});
+
 app.delete('/teams/:id', (req, res) => {
 
 		db.run(
@@ -308,15 +395,12 @@ app.put('/users/:id/language', (req, res) => {
 		SET language = ?
 		WHERE id = ?
 		`,
-		[
-			language,
-			req.params.id
-		],
+		[language, req.params.id],
 		(err) => {
 
 			if (err) {
 				return res.status(500).json({
-					message: 'Fehler'
+					message: 'Fehler beim Speichern'
 				});
 			}
 
@@ -327,6 +411,32 @@ app.put('/users/:id/language', (req, res) => {
 	);
 });
 
-app.listen(3000, () => {
-	console.log('Server läuft auf Port 3000');
+io.on('connection', (socket) => {
+
+	console.log(
+		'Benutzer verbunden:',
+		socket.id
+	);
+
+	socket.on(
+		'teamUpdated',
+		(team) => {
+
+			socket.broadcast.emit(
+				'teamUpdated',
+				team
+			);
+		}
+	);
+
+	socket.on(
+		'disconnect',
+		() => {
+
+			console.log(
+				'Benutzer getrennt:',
+				socket.id
+			);
+		}
+	);
 });

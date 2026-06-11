@@ -1,174 +1,122 @@
 <script>
-	let language = $state(
-		localStorage.getItem('language') || 'de'
-	);
+	import { onMount } from 'svelte';
 
-    const user = JSON.parse(
-	    localStorage.getItem('user')
-    );
+	let language = $state('de');
 
-    let username = $state(
-	    user?.username ?? ''
-    );
+	let user = $state(null);
 
-    let email = $state(
-	    user?.email ?? ''
-);
+	let username = $derived(user?.username ?? '');
+
+	let email = $derived(user?.email ?? '');
+
+	onMount(() => {
+		const data = JSON.parse(localStorage.getItem('user'));
+
+		user = data;
+
+		language = data?.language ?? 'de';
+	});
 
 	async function saveLanguage() {
+		console.log('Neue Sprache:', language);
 
-	const user = JSON.parse(
-		localStorage.getItem('user')
-	);
-
-	const response = await fetch(
-		`http://localhost:3000/users/${user.id}/language`,
-		{
-			method: 'PUT',
-
-			headers: {
-				'Content-Type':
-					'application/json'
+		const response = await fetch(
+			`http://localhost:3000/users/${user.id}/language`,
+			{
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					language,
+				}),
 			},
-
-			body: JSON.stringify({
-				language
-			})
-		}
-	);
-
-	if (response.ok) {
-
-		user.language = language;
-
-		localStorage.setItem(
-			'user',
-			JSON.stringify(user)
 		);
 
-		location.reload();
+		console.log('Status:', response.status);
+
+		const data = await response.json();
+
+		console.log(data);
+
+		alert(data.message);
+
+		if (response.ok) {
+			user.language = language;
+
+			localStorage.setItem('user', JSON.stringify(user));
+
+			location.reload();
+		}
 	}
-}
 
 	async function deleteAccount() {
-
-	const confirmDelete = confirm(
-		'Möchtest du deinen Account wirklich löschen?'
-	);
-
-	if (!confirmDelete) return;
-
-	const user = JSON.parse(
-		localStorage.getItem('user')
-	);
-
-	const response = await fetch(
-		`http://localhost:3000/users/${user.id}`,
-		{
-			method: 'DELETE'
-		}
-	);
-
-	const data = await response.json();
-
-	alert(data.message);
-
-	if (response.ok) {
-
-		localStorage.removeItem(
-			'user'
+		const confirmDelete = confirm(
+			'Möchtest du deinen Account wirklich löschen?',
 		);
 
-		window.location.href = '/';
+		if (!confirmDelete) return;
+
+		const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+			method: 'DELETE',
+		});
+
+		const data = await response.json();
+
+		alert(data.message);
+
+		if (response.ok) {
+			localStorage.removeItem('user');
+
+			window.location.href = '/';
+		}
 	}
-}
 </script>
 
 <div class="page">
-
-	<h1>
-		Einstellungen
-	</h1>
+	<h1>Einstellungen</h1>
 
 	<div class="settings-grid">
-
 		<div class="card">
-
-			<h2>
-				Konto
-			</h2>
+			<h2>Konto</h2>
 
 			<div class="info">
-
 				<p>
-					<strong>
-						Benutzername:
-					</strong>
+					<strong> Benutzername: </strong>
 
 					{username}
 				</p>
 
 				<p>
-					<strong>
-						E-Mail:
-					</strong>
+					<strong> E-Mail: </strong>
 
 					{email}
 				</p>
-
 			</div>
 
-			<button
-				class="danger-btn"
-				onclick={deleteAccount}
-			>
+			<button class="danger-btn" onclick={deleteAccount}>
 				Account löschen
 			</button>
-
 		</div>
 
 		<div class="card">
+			<h2>Sprache</h2>
 
-			<h2>
-				Sprache
-			</h2>
+			<p>Wähle die Sprache der Anwendung.</p>
 
-			<p>
-				Wähle die Sprache
-				der Anwendung.
-			</p>
+			<select bind:value={language}>
+				<option value="de"> Deutsch </option>
 
-			<select
-				bind:value={language}
-			>
-
-				<option value="de">
-					Deutsch
-				</option>
-
-				<option value="en">
-					English
-				</option>
-
+				<option value="en"> English </option>
 			</select>
 
-			<button
-				class="save-btn"
-				onclick={saveLanguage}
-			>
-				Speichern
-			</button>
-
+			<button class="save-btn" onclick={saveLanguage}> Speichern </button>
 		</div>
 
 		<div class="card">
-
-			<h2>
-				Statistiken
-			</h2>
+			<h2>Statistiken</h2>
 
 			<div class="stats">
-
 				<div>
 					Gespeicherte Teams:
 					<span>0</span>
@@ -183,70 +131,43 @@
 					Meistgenutzte Rolle:
 					<span>DPS</span>
 				</div>
-
 			</div>
 		</div>
 	</div>
 </div>
 
 <style>
-
 	.page {
-
 		padding: 30px;
 
 		color: white;
 	}
 
 	h1 {
-
 		margin-bottom: 25px;
 
 		font-size: 38px;
 	}
 
 	.settings-grid {
-
 		display: grid;
 
-		grid-template-columns:
-			repeat(
-				auto-fit,
-				minmax(
-					350px,
-					1fr
-				)
-			);
+		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 
 		gap: 20px;
 	}
 
 	.card {
-
-		background:
-			rgba(
-				20,
-				20,
-				40,
-				0.9
-			);
+		background: rgba(20, 20, 40, 0.9);
 
 		border-radius: 20px;
 
 		padding: 25px;
 
-		border:
-			1px solid
-			rgba(
-				255,
-				255,
-				255,
-				0.08
-			);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 	}
 
 	.card h2 {
-
 		margin-top: 0;
 
 		margin-bottom: 15px;
@@ -255,12 +176,10 @@
 	}
 
 	.info p {
-
 		color: #cbd5e1;
 	}
 
 	select {
-
 		width: 100%;
 
 		padding: 12px;
@@ -269,13 +188,7 @@
 
 		border: none;
 
-		background:
-			rgba(
-				255,
-				255,
-				255,
-				0.08
-			);
+		background: rgba(255, 255, 255, 0.08);
 
 		color: white;
 
@@ -284,8 +197,12 @@
 		margin-bottom: 15px;
 	}
 
-	.save-btn {
+	select option {
+		background: rgb(20, 20, 40);
+		color: white;
+	}
 
+	.save-btn {
 		width: 100%;
 
 		padding: 12px;
@@ -304,12 +221,10 @@
 	}
 
 	.save-btn:hover {
-
 		background: #a855f7;
 	}
 
 	.danger-btn {
-
 		width: 100%;
 
 		padding: 12px;
@@ -330,12 +245,10 @@
 	}
 
 	.danger-btn:hover {
-
 		background: #dc2626;
 	}
 
 	.stats {
-
 		display: flex;
 
 		flex-direction: column;
@@ -344,14 +257,7 @@
 	}
 
 	.stats div {
-
-		background:
-			rgba(
-				255,
-				255,
-				255,
-				0.05
-			);
+		background: rgba(255, 255, 255, 0.05);
 
 		padding: 12px;
 
@@ -359,7 +265,6 @@
 	}
 
 	.stats span {
-
 		float: right;
 
 		color: #c084fc;
@@ -367,15 +272,9 @@
 		font-weight: bold;
 	}
 
-	@media (
-		max-width: 768px
-	) {
-
+	@media (max-width: 768px) {
 		.settings-grid {
-
-			grid-template-columns:
-				1fr;
+			grid-template-columns: 1fr;
 		}
 	}
-
 </style>

@@ -1,5 +1,4 @@
 <script>
-
 	let login = $state('');
 	let password = $state('');
 
@@ -18,14 +17,14 @@
 		const data = await response.json();
 
 		if (!response.ok) {
-		alert(data.message);
-		return;
+			alert(data.message);
+			return;
+		}
+
+		localStorage.setItem('user', JSON.stringify(data.user));
+
+		window.location.href = '/charakter';
 	}
-
-	localStorage.setItem('user',JSON.stringify(data.user));
-
-	window.location.href = '/charakter';
-}
 </script>
 
 <div class="login-page">
