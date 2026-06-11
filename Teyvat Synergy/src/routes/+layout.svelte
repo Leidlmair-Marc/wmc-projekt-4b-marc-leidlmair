@@ -1,28 +1,39 @@
 <script>
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
+	import { translations } from '$lib/data/translations.js';
 
 	let { children } = $props();
 	let showNavbar = $derived(
 		page.url.pathname !== '/' &&
 		page.url.pathname !== '/register'
 	);
+
+	let language = 'de';
+	const t = translations[language];
+	if (typeof window !== 'undefined') {
+
+		const user = JSON.parse(localStorage.getItem('user'));
+		language = user?.language || 'de';
+}
 </script>
 
 {#if showNavbar}
 	<div class="navbar">
-		<a href="/charakter">Charaktere</a>
+		<a href="/charakter">
+			{t.characters}
+		</a>
 
 		<a href="/teamBuilder">
-			Team Builder
+			{t.teamBuilder}
 		</a>
 
 		<a href="/savedTeams">
-			Gespeicherte Teams
+			{t.savedTeams}
 		</a>
 
 		<a href="/settings">
-			Profil
+			{t.settings}
 		</a>
 	</div>
 {/if}

@@ -70,11 +70,12 @@ app.post('/login', (req, res) => {
 			res.json({
 				message: 'Login erfolgreich',
 				user: {
-					id: user.id,
-					username: user.username,
-					email: user.email
-				}
-			});
+				id: user.id,
+				username: user.username,
+				email: user.email,
+				language: user.language
+			}
+		});
 		}
 	);
 });
@@ -293,6 +294,35 @@ app.delete('/users/:id', (req, res) => {
 					);
 				}
 			);
+		}
+	);
+});
+
+app.put('/users/:id/language', (req, res) => {
+
+	const { language } = req.body;
+
+	db.run(
+		`
+		UPDATE users
+		SET language = ?
+		WHERE id = ?
+		`,
+		[
+			language,
+			req.params.id
+		],
+		(err) => {
+
+			if (err) {
+				return res.status(500).json({
+					message: 'Fehler'
+				});
+			}
+
+			res.json({
+				message: 'Sprache gespeichert'
+			});
 		}
 	);
 });

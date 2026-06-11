@@ -15,17 +15,40 @@
 	    user?.email ?? ''
 );
 
-	function saveLanguage() {
+	async function saveLanguage() {
+
+	const user = JSON.parse(
+		localStorage.getItem('user')
+	);
+
+	const response = await fetch(
+		`http://localhost:3000/users/${user.id}/language`,
+		{
+			method: 'PUT',
+
+			headers: {
+				'Content-Type':
+					'application/json'
+			},
+
+			body: JSON.stringify({
+				language
+			})
+		}
+	);
+
+	if (response.ok) {
+
+		user.language = language;
 
 		localStorage.setItem(
-			'language',
-			language
+			'user',
+			JSON.stringify(user)
 		);
 
-		alert(
-			'Sprache gespeichert'
-		);
+		location.reload();
 	}
+}
 
 	async function deleteAccount() {
 
